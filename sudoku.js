@@ -70,7 +70,6 @@ function onClick(i, j) {
 
 // this assumes that m*n is at most 9
 function onKeypress(evt) {
-	console.log("Keypress");
 	if(globalState.cellSelected) {
 		var i = globalState.selectedCell.i;
 		var j = globalState.selectedCell.j;
@@ -87,7 +86,6 @@ function onKeypress(evt) {
 }
 
 function onKeydown(evt) {
-	console.log("Keydown");
 	if(globalState.cellSelected) {
 		var i = globalState.selectedCell.i;
 		var j = globalState.selectedCell.j;
@@ -111,13 +109,12 @@ function onKeydown(evt) {
 				break;
 		}
 		if(i < 0) i=0;
-		if(i > m*n) i = m*n;
+		if(i >= m*n) i = m*n-1;
 		if(j < 0) j=0;
-		if(j > m*n) j = m*n;
+		if(j >= m*n) j = m*n-1;
 		globalState.selectedCell.i = i;
 		globalState.selectedCell.j = j;
 		cell(i,j).dataset.active = "active";
-		console.log(evt);
 	}
 }
 

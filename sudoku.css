@@ -7,13 +7,13 @@ h1 {
 	text-align: center;
 }
 
-#sudoku table {
+.sudoku table {
 	border: 2px solid black;
 	border-collapse: collapse;
 	margin: auto;
 }
 
-#sudoku td {
+.sudoku td {
 	border: 1px solid #dddddd;
 	width: 3em;
 	height: 3em;
@@ -22,18 +22,36 @@ h1 {
 	cursor: default;
 }
 
-#sudoku td:hover {
+.sudoku td:hover {
 	background-color: #ffffdd;
 }
 
-#sudoku td.thickleft {
+.sudoku td.thickleft {
 	border-left: 2px solid black;
 }
 
-#sudoku td.thicktop {
+.sudoku td.thicktop {
 	border-top: 2px solid black;
 }
 
-#sudoku td[data-active="active"] {
+.sudoku td[data-active="active"] {
 	background-color: #ffff99;
+}
+
+.sudoku td table.minis {
+	font-size: 0.6em;
+	color: #dddddd;
+	border: 0px solid black;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+}
+.sudoku td table.minis td {
+	width: 1em;
+	height: 1em;
+	border: 0px solid black;
+}
+.sudoku td table.minis td.activemini {
+	color: #666666;
 }
