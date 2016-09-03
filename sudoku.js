@@ -85,7 +85,7 @@ function onKeypress(evt) {
 
 window.onload = function() {
 	m = 3;
-	n = 2;
+	n = 3;
 	createHTML(m, n);
 	s = new Sudoku(m, n);
 	s.grid[1][2] = 3;
