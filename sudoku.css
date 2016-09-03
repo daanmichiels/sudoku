@@ -1,0 +1,30 @@
+
+body, html {
+	font-family: "Montserrat", sans-serif;
+}
+
+h1 {
+	text-align: center;
+}
+
+#sudoku table {
+	border: 2px solid black;
+	border-collapse: collapse;
+	margin: auto;
+}
+
+#sudoku td {
+	border: 1px solid #dddddd;
+	width: 3em;
+	height: 3em;
+	text-align: center;
+	font-size: 1.2em;
+}
+
+#sudoku td.thickleft {
+	border-left: 2px solid black;
+}
+
+#sudoku td.thicktop {
+	border-top: 2px solid black;
+}
