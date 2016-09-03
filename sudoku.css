@@ -28,3 +28,7 @@ h1 {
 #sudoku td.thicktop {
 	border-top: 2px solid black;
 }
+
+#sudoku td.hover-strong {
+	background-color: #ffff99;
+}
