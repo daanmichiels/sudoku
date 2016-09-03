@@ -91,7 +91,7 @@ window.onload = function() {
 	s.grid[1][2] = 3;
 	s.show();
 	globalState.sudoku = s;
-	document.addEventListener("keypress", onKeypress);
+	window.addEventListener("keypress", onKeypress);
 
 	console.log(Number(" "));
 	if(Number("1")) {
