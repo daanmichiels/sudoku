@@ -72,26 +72,13 @@ function onKeypress(evt) {
 	j = globalState.lastActiveCell.j;
 	if(document.getElementById(i + ";" + j).dataset.active == "active") {
 		key = evt.key;
-		switch(key) {
-			case "1":
-			case "2":
-			case "3":
-			case "4":
-			case "5":
-			case "6":
-			case "7":
-			case "8":
-			case "9":
-				globalState.sudoku.grid[i][j] = Number(key);
-				document.getElementById(i+";"+j).innerHTML = key;
-				break;
-			case " ":
-			case "0":
-				globalState.sudoku.grid[i][j] = -1;
-				document.getElementById(i+";"+j).innerHTML = "&nbsp;";
-				break;
-			default:
-				break;
+		number = Number(key);
+		if(number && number <= globalState.sudoku.m * globalState.sudoku.n) {
+			globalState.sudoku.grid[i][j] = number;
+			document.getElementById(i+";"+j).innerHTML = number;
+		} else if (key == " " || key == "0") {
+			globalState.sudoku.grid[i][j] = -1;
+			document.getElementById(i+";"+j).innerHTML = "&nbsp;";
 		}
 	}
 }
@@ -105,4 +92,9 @@ window.onload = function() {
 	s.show();
 	globalState.sudoku = s;
 	document.addEventListener("keypress", onKeypress);
+
+	console.log(Number(" "));
+	if(Number("1")) {
+		console.log("yo");
+	}
 }
