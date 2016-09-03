@@ -29,6 +29,6 @@ h1 {
 	border-top: 2px solid black;
 }
 
-#sudoku td.hover-strong {
+#sudoku td[data-active="active"] {
 	background-color: #ffff99;
 }

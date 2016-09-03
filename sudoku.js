@@ -1,4 +1,6 @@
 
+var globalState = { lastActiveCell : { i : 0, j : 0},
+                    sudoku : {} };
 
 var Sudoku = function(m, n) {
 	this.m = m;
@@ -8,10 +10,8 @@ var Sudoku = function(m, n) {
 		row = [];
 		for(var j = 0; j < n*m; ++j) {
 			row.push(-1);
-			console.log('YO');
 		}
 		this.grid.push(row);
-		console.log(row.length);
 	}
 }
 
@@ -24,45 +24,76 @@ Sudoku.prototype.show = function() {
 	}
 }
 
-var onMouseEnter = function(i, j) {
+function onMouseEnter(i, j) {
 	var cell = document.getElementById(i + ";" + j);
-	cell.classList.add("hover-strong");
+	cell.dataset.active = "active";
+	globalState.lastActiveCell.i = i;
+	globalState.lastActiveCell.j = j;
 }
 
-var onMouseLeave = function(i, j) {
+function onMouseLeave(i, j) {
 	var cell = document.getElementById(i + ";" + j);
-	cell.classList.remove("hover-strong");
+	cell.dataset.active = "";
 }
 
-var createHTML = function(m, n) {
-	var table = "<table>";
-	for(var i = 0; i < this.m * this.n; ++i) {
-		table += "<tr>";
-		for(var j = 0; j < this.m * this.n; ++j) {
-			var classes = [];
+function createHTML(m, n) {
+	var table = document.createElement("table");
+	// note the use of 'let' instead of 'var'
+	// to get a separate copy of the variable
+	// for each of the closure we create below
+	// (for the events)
+	for(let i = 0; i < this.m * this.n; ++i) {
+		var row = document.createElement("tr");
+		for(let j = 0; j < this.m * this.n; ++j) {
+			var cell = document.createElement("td");
 			if(i % this.m == 0) {
-				classes.push("thicktop");
+				cell.classList.add("thicktop");
 			}
 			if(j % this.n == 0) {
-				classes.push("thickleft");
+				cell.classList.add("thickleft");
 			}
-			table += "<td id=\"";
-			table += i + ";" + j;
-			table += "\"";
-			if(classes.length > 0) {
-				table += " class=\"";
-				table += classes.join(" ");
-				table += "\"";
-			}
-			table += " onmouseenter=\"onMouseEnter(" + i + ", " + j + ");\""
-			table += " onmouseleave=\"onMouseLeave(" + i + ", " + j + ");\"></td>";
+			cell.id = i + ";" + j;
+			cell.addEventListener("mouseenter", function() { onMouseEnter(i,j); });
+			cell.addEventListener("mouseleave", function() { onMouseLeave(i,j); });
+			row.appendChild(cell);
 		}
-		table += "</tr>";
+		table.appendChild(row);
 	}
-	table += "</table>";
-
 	div = document.getElementById("sudoku");
-	div.innerHTML = table;
+	while (div.firstChild) {
+		div.removeChild(div.firstChild);
+	}
+	div.appendChild(table);
+}
+
+// this assumes that m*n is at most 9
+function onKeypress(evt) {
+	i = globalState.lastActiveCell.i;
+	j = globalState.lastActiveCell.j;
+	if(document.getElementById(i + ";" + j).dataset.active == "active") {
+		key = evt.key;
+		switch(key) {
+			case "1":
+			case "2":
+			case "3":
+			case "4":
+			case "5":
+			case "6":
+			case "7":
+			case "8":
+			case "9":
+				globalState.sudoku.grid[i][j] = Number(key);
+				document.getElementById(i+";"+j).innerHTML = key;
+				break;
+			case " ":
+			case "0":
+				globalState.sudoku.grid[i][j] = -1;
+				document.getElementById(i+";"+j).innerHTML = "&nbsp;";
+				break;
+			default:
+				break;
+		}
+	}
 }
 
 window.onload = function() {
@@ -72,4 +103,6 @@ window.onload = function() {
 	s = new Sudoku(m, n);
 	s.grid[1][2] = 3;
 	s.show();
+	globalState.sudoku = s;
+	document.addEventListener("keypress", onKeypress);
 }
