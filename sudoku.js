@@ -68,6 +68,7 @@ function createHTML(m, n) {
 
 // this assumes that m*n is at most 9
 function onKeypress(evt) {
+	console.log("Keypress");
 	i = globalState.lastActiveCell.i;
 	j = globalState.lastActiveCell.j;
 	if(document.getElementById(i + ";" + j).dataset.active == "active") {
@@ -91,7 +92,7 @@ window.onload = function() {
 	s.grid[1][2] = 3;
 	s.show();
 	globalState.sudoku = s;
-	window.addEventListener("keypress", onKeypress);
+	document.addEventListener("keypress", onKeypress);
 
 	console.log(Number(" "));
 	if(Number("1")) {
