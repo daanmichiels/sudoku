@@ -19,6 +19,11 @@ h1 {
 	height: 3em;
 	text-align: center;
 	font-size: 1.2em;
+	cursor: default;
+}
+
+#sudoku td:hover {
+	background-color: #ffffdd;
 }
 
 #sudoku td.thickleft {

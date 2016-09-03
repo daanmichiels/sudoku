@@ -1,6 +1,8 @@
 
-var globalState = { lastActiveCell : { i : 0, j : 0},
-                    sudoku : {} };
+var globalState = {
+	selectedCell : { i : 0, j : 0},
+	cellSelected : false,
+    sudoku : {} };
 
 var Sudoku = function(m, n) {
 	this.m = m;
@@ -18,22 +20,13 @@ var Sudoku = function(m, n) {
 Sudoku.prototype.show = function() {
 	for(var i = 0; i < this.m * this.n; ++i) {
 		for(var j = 0; j < this.m * this.n; ++j) {
-			var cell = document.getElementById(i + ";" + j);
-			cell.innerHTML = this.grid[i][j] == -1 ? "&nbsp;" : this.grid[i][j];
+			cell(i,j).innerHTML = this.grid[i][j] == -1 ? "&nbsp;" : this.grid[i][j];
 		}
 	}
 }
 
-function onMouseEnter(i, j) {
-	var cell = document.getElementById(i + ";" + j);
-	cell.dataset.active = "active";
-	globalState.lastActiveCell.i = i;
-	globalState.lastActiveCell.j = j;
-}
-
-function onMouseLeave(i, j) {
-	var cell = document.getElementById(i + ";" + j);
-	cell.dataset.active = "";
+function cell(i, j) {
+	return document.getElementById(i + ";" + j);
 }
 
 function createHTML(m, n) {
@@ -53,8 +46,7 @@ function createHTML(m, n) {
 				cell.classList.add("thickleft");
 			}
 			cell.id = i + ";" + j;
-			cell.addEventListener("mouseenter", function() { onMouseEnter(i,j); });
-			cell.addEventListener("mouseleave", function() { onMouseLeave(i,j); });
+			cell.addEventListener("click", function() { onClick(i,j); });
 			row.appendChild(cell);
 		}
 		table.appendChild(row);
@@ -66,20 +58,30 @@ function createHTML(m, n) {
 	div.appendChild(table);
 }
 
+function onClick(i, j) {
+	if(globalState.cellSelected) {
+		cell(globalState.selectedCell.i, globalState.selectedCell.j).dataset.active = "";
+	}
+	globalState.cellSelected = true;
+	globalState.selectedCell.i = i;
+	globalState.selectedCell.j = j;
+	cell(globalState.selectedCell.i, globalState.selectedCell.j).dataset.active = "active";
+}
+
 // this assumes that m*n is at most 9
 function onKeypress(evt) {
 	console.log("Keypress");
-	i = globalState.lastActiveCell.i;
-	j = globalState.lastActiveCell.j;
-	if(document.getElementById(i + ";" + j).dataset.active == "active") {
+	if(globalState.cellSelected) {
+		var i = globalState.selectedCell.i;
+		var j = globalState.selectedCell.j;
 		key = evt.key;
 		number = Number(key);
 		if(number && number <= globalState.sudoku.m * globalState.sudoku.n) {
 			globalState.sudoku.grid[i][j] = number;
-			document.getElementById(i+";"+j).innerHTML = number;
+			cell(i,j).innerHTML = number;
 		} else if (key == " " || key == "0") {
 			globalState.sudoku.grid[i][j] = -1;
-			document.getElementById(i+";"+j).innerHTML = "&nbsp;";
+			cell(i,j).innerHTML = "&nbsp;";
 		}
 	}
 }
@@ -93,9 +95,4 @@ window.onload = function() {
 	s.show();
 	globalState.sudoku = s;
 	document.addEventListener("keypress", onKeypress);
-
-	console.log(Number(" "));
-	if(Number("1")) {
-		console.log("yo");
-	}
 }
