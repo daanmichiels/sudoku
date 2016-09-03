@@ -86,6 +86,41 @@ function onKeypress(evt) {
 	}
 }
 
+function onKeydown(evt) {
+	console.log("Keydown");
+	if(globalState.cellSelected) {
+		var i = globalState.selectedCell.i;
+		var j = globalState.selectedCell.j;
+		cell(i,j).dataset.active = "";
+		var m = globalState.sudoku.m;
+		var n = globalState.sudoku.n;
+		switch(evt.keyCode) {
+			case 37:
+				j -= 1;
+				break;
+			case 38:
+				i -= 1;
+				break;
+			case 39:
+				j += 1;
+				break;
+			case 40:
+				i += 1;
+				break;
+			default:
+				break;
+		}
+		if(i < 0) i=0;
+		if(i > m*n) i = m*n;
+		if(j < 0) j=0;
+		if(j > m*n) j = m*n;
+		globalState.selectedCell.i = i;
+		globalState.selectedCell.j = j;
+		cell(i,j).dataset.active = "active";
+		console.log(evt);
+	}
+}
+
 window.onload = function() {
 	m = 3;
 	n = 3;
@@ -95,4 +130,5 @@ window.onload = function() {
 	s.show();
 	globalState.sudoku = s;
 	document.addEventListener("keypress", onKeypress);
+	document.addEventListener("keydown", onKeydown);
 }
