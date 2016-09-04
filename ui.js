@@ -51,8 +51,8 @@ SudokuUI.prototype.createHTML = function() {
 		throw "Cannot createHTML when no sudoku is set.";
 	}
 
-	m = this.sudoku.m;
-	n = this.sudoku.n;
+	var m = this.sudoku.m;
+	var n = this.sudoku.n;
 
 	var ui = this;
 	var table = this.doc.createElement("table");
@@ -76,7 +76,7 @@ SudokuUI.prototype.createHTML = function() {
 		}
 		table.appendChild(row);
 	}
-	div = this.doc.getElementById("sudoku");
+	var div = this.doc.getElementById("sudoku");
 	while (div.firstChild) {
 		div.removeChild(div.firstChild);
 	}
@@ -103,7 +103,9 @@ SudokuUI.prototype.handleKeypress = function(evt) {
 		this.cell(i,j).innerHTML = number;
 
 		if(this.blanks == 0) {
-			console.log("Complete. Checking for correctness.");
+			if(this.sudoku.correct()) {
+				console.log("You won!");
+			}
 		}
 
 	} else if (key == " " || key == "0") {
