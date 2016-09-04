@@ -84,11 +84,15 @@ SudokuUI.prototype.createHTML = function() {
 };
 
 SudokuUI.prototype.win = function() {
+	if(this.cellSelected) {
+		this.cell(this.selectedCell.i, this.selectedCell.j).dataset.active = "";
+		this.cellSelected = false;
+	}
 	var winbox = this.doc.createElement("div");
 	var wintext = this.doc.createElement("span");
 	winbox.classList.add("winbox");
 	wintext.classList.add("wintext");
-	wintext.innerHTML = "You won!";
+	wintext.innerHTML = "Solved!";
 	this.doc.body.appendChild(winbox);
 	winbox.appendChild(wintext);
 }
