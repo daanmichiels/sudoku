@@ -83,6 +83,16 @@ SudokuUI.prototype.createHTML = function() {
 	div.appendChild(table);
 };
 
+SudokuUI.prototype.win = function() {
+	var winbox = this.doc.createElement("div");
+	var wintext = this.doc.createElement("span");
+	winbox.classList.add("winbox");
+	wintext.classList.add("wintext");
+	wintext.innerHTML = "You won!";
+	this.doc.body.appendChild(winbox);
+	winbox.appendChild(wintext);
+}
+
 SudokuUI.prototype.handleKeypress = function(evt) {
 	if(!this.cellSelected) {
 		return;
@@ -104,7 +114,7 @@ SudokuUI.prototype.handleKeypress = function(evt) {
 
 		if(this.blanks == 0) {
 			if(this.sudoku.correct()) {
-				console.log("You won!");
+				this.win();
 			}
 		}
 
