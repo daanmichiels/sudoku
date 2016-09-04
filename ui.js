@@ -95,9 +95,21 @@ SudokuUI.prototype.handleKeypress = function(evt) {
 	var key = evt.key;
 	var number = Number(key);
 	if(number && number <= this.sudoku.m * this.sudoku.n) {
+		if(this.sudoku.grid[i][j] != -1) {
+			this.blanks++;
+		}
 		this.sudoku.grid[i][j] = number;
+		this.blanks--;
 		this.cell(i,j).innerHTML = number;
+
+		if(this.blanks == 0) {
+			console.log("Complete. Checking for correctness.");
+		}
+
 	} else if (key == " " || key == "0") {
+		if(this.sudoku.grid[i][j] != -1) {
+			this.blanks++;
+		}
 		this.sudoku.grid[i][j] = -1;
 		this.cell(i,j).innerHTML = "&nbsp;";
 	}
