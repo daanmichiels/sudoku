@@ -17,12 +17,9 @@ var SudokuUI = function(doc) {
 SudokuUI.prototype.newPuzzle = function() {
 	console.log("New puzzle");
 	var s = new Sudoku(3,3);
-	s.grid = puzzles[Math.round(Math.random())];
-	for(var i=0; i<9; ++i) {
-		for(var j=0; j<9; ++j) {
-			s.given[i][j] = (s.grid[i][j] != -1);
-		}
-	}
+	var level = this.doc.getElementById("level").value;
+	level = Number(level);
+	s = createSudoku(level);
 	var winbox = this.doc.getElementById("winbox");
 	if(winbox) {
 		this.doc.body.removeChild(winbox);

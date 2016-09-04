@@ -16,6 +16,81 @@ var Sudoku = function(m, n) {
 	}
 };
 
+function createSudoku(level) {
+
+	var toEntry = function(t) {
+		var numbers = ["1","2","3","4","5","6","7","8","9"];
+		var idx = numbers.indexOf(t);
+		if(idx == -1) {
+			return -1;
+		}
+		return idx + 1;
+	}
+
+	// in-place (!) shuffle
+	var shuffle = function(arr) {
+		for(var i=arr.length - 1; i > 0; i--) {
+			var j = Math.floor(Math.random() * (i+1));
+			var temp = arr[i];
+			arr[i] = arr[j];
+			arr[j] = temp;
+		}
+		return arr;
+	}
+
+	var permutationOfThree = function() {
+		var three = [0,1,2];
+		return shuffle(three);
+	}
+
+	var gridstrings = puzzles["level"+level];
+	console.log("Picking from " + gridstrings.length + " puzzles.");
+	var gridstring = gridstrings[Math.floor(Math.random() * gridstrings.length)];
+	console.log("Picked " + gridstring);
+
+	// permute rows
+	var blocks = [ permutationOfThree(), permutationOfThree(), permutationOfThree() ];
+	var blockperm = permutationOfThree();
+	var rows = [];
+	for(var k=0; k<3; ++k) {
+		for(var l=0; l<3; ++l) {
+			rows.push(3*blockperm[k]+blocks[k][l]);
+		}
+	}
+
+	// permute cols
+	blocks = [ permutationOfThree(), permutationOfThree(), permutationOfThree() ];
+	blockperm = permutationOfThree();
+	var cols = [];
+	for(var k=0; k<3; ++k) {
+		for(var l=0; l<3; ++l) {
+			cols.push(3*blockperm[k]+blocks[k][l]);
+		}
+	}
+
+	// rename digits
+	digits = [1,2,3,4,5,6,7,8,9];
+	shuffle(digits);
+	console.log(digits);
+
+	var s = new Sudoku(3,3);
+	// fill grid
+	for(var i=0; i<9; ++i) {
+		for(var j=0; j<9; ++j) {
+			var entry = toEntry(gridstring[9*i+j]);
+			s.grid[rows[i]][cols[j]] = (entry == -1) ? -1 : digits[entry-1];
+		}
+	}
+
+	// mark givens
+	for(var i=0; i<9; ++i) {
+		for(var j=0; j<9; ++j) {
+			s.given[i][j] = (s.grid[i][j] != -1);
+		}
+	}
+	return s;
+}
+
 Sudoku.prototype.correct = function() {
 	var m = this.m;
 	var n = this.n;
