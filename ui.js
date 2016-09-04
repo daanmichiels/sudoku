@@ -93,6 +93,8 @@ SudokuUI.prototype.win = function() {
 	winbox.classList.add("winbox");
 	wintext.classList.add("wintext");
 	wintext.innerHTML = "Solved!";
+	var ui = this;
+	winbox.addEventListener("click", function() { ui.doc.body.removeChild(winbox); });
 	this.doc.body.appendChild(winbox);
 	winbox.appendChild(wintext);
 }

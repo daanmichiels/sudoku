@@ -5,23 +5,40 @@ body, html {
 
 h1 {
 	text-align: center;
+
+	position: absolute;
+	top: 0vmin;
+	font-size: 5vmin;
+	width: 72vmin;
+	left: calc(50vw - 36vmin);
 }
 
 .sudoku table {
 	border: 2px solid black;
 	border-collapse: collapse;
-	margin: auto;
+	box-sizing: border-box;
+
+	position: absolute;
+	height: 72vmin;
+	width: 72vmin;
+	left: calc(50vw - 36vmin);
+	top: 20vmin;
 }
 
+.sudoku tr {
+	height: 8vmin;
+	box-sizing: border-box;
+}
 .sudoku td {
 	border: 1px solid #dddddd;
-	width: 3em;
-	height: 3em;
+	width: 8vmin;
+	height: 8vmin;
 	text-align: center;
-	font-size: 1.2em;
+	font-size: 4vmin;
 	cursor: default;
 	font-family: 'Leckerli One', cursive;
 	color: #0000ff;
+	box-sizing: border-box;
 }
 
 .sudoku td:hover {
@@ -42,43 +59,59 @@ h1 {
 
 .sudoku td[data-given="given"] {
 	font-family: "Montserrat", sans-serif;
-	font-size: 120%;
 	color: #000000;
-}
-
-.sudoku td table.minis {
-	font-size: 0.6em;
-	color: #dddddd;
-	border: 0px solid black;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	height: 100%;
-}
-.sudoku td table.minis td {
-	width: 1em;
-	height: 1em;
-	border: 0px solid black;
-}
-.sudoku td table.minis td.activemini {
-	color: #666666;
 }
 
 .winbox {
 	z-index: 5;
 	position: absolute;
-	left: 50%;
-	margin-left: -5em;
-	width: 10em;
-	font-size: 500%;
-	display: table;
-	transform: rotate(-10deg);
+	height: 72vmin;
+	width: 72vmin;
+	left: calc(50vw - 36vmin);
+	top: 20vmin;
 }
 .wintext {
-	display: table-cell;
 	text-align: center;
-	width: 100%;
-	height: 100%;
+	position: absolute;
+	width: 60vmin;
+	height: 16vmin;
+	left: 6vmin;
+	top: 28vmin;
 	font-family: 'Leckerli One', cursive;
+	font-size: 10vmin;
+	transform: rotate(-20deg);
+	color: #ffff66;
+	text-shadow: 0 0 3vmin #000000,
+	             0 0 1vmin #000000;
+}
 
+button {
+	width: 24vmin;
+	height: 6vmin;
+	font-size: 2vmin;
+	font-family: "Montserrat", sans-serif;
+	background-color: #ffffff;
+	border: 2px solid black;
+	box-sizing: border-box;
+}
+
+button:hover {
+	background-color: #ffffdd;
+	cursor: pointer;
+}
+
+button:active {
+	background-color: #ffff99;
+}
+
+button#new {
+	position: absolute;
+	top: 12vmin;
+	left: calc(50vw - 25vmin);
+}
+
+button#restart {
+	position: absolute;
+	top: 12vmin;
+	left: calc(50vw + 1vmin);
 }
