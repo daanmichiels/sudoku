@@ -7,7 +7,40 @@ var SudokuUI = function(doc) {
 	var ui = this;
 	this.doc.addEventListener("keypress", function(evt) { ui.handleKeypress(evt); });
 	this.doc.addEventListener("keydown", function(evt) { ui.handleKeydown(evt); });
+
+	var newbutton = this.doc.getElementById("new");
+	var restartbutton = this.doc.getElementById("restart");
+	newbutton.addEventListener("click", function(evt) { ui.newPuzzle(); });
+	restartbutton.addEventListener("click", function(evt) { ui.restartPuzzle(); });
 };
+
+SudokuUI.prototype.newPuzzle = function() {
+	console.log("New puzzle");
+	this.restartPuzzle();
+}
+
+SudokuUI.prototype.restartPuzzle = function() {
+	console.log("Restart puzzle");
+	if(!this.sudoku) {
+		return;
+	}
+	var s = this.sudoku;
+	for(var i=0; i<s.m*s.n; ++i) {
+		for(var j=0; j<s.m*s.n; ++j) {
+			if(!s.given[i][j]) {
+				s.grid[i][j] = -1;
+				this.cell(i,j).innerHTML = "&nbsp;";
+			}
+		}
+	}
+	this.cell(this.selectedCell.i, this.selectedCell.j).dataset.active = "";
+	this.cellSelected = false;
+	this.selectedCell = { i : 0, j : 0 };
+	var winbox = this.doc.getElementById("winbox");
+	if(winbox) {
+		this.doc.body.removeChild(winbox);
+	}
+}
 
 SudokuUI.prototype.cell = function(i, j) {
 	return this.doc.getElementById(i + ";" + j);
@@ -36,7 +69,6 @@ SudokuUI.prototype.setSudoku = function(s) {
 };
 
 SudokuUI.prototype.handleClick = function(i, j) {
-	console.log("Click (" + i + ", " + j + ")");
 	if(this.cellSelected) {
 		this.cell(this.selectedCell.i, this.selectedCell.j).dataset.active = "";
 	}
@@ -94,6 +126,7 @@ SudokuUI.prototype.win = function() {
 	wintext.classList.add("wintext");
 	wintext.innerHTML = "Solved!";
 	var ui = this;
+	winbox.id = "winbox";
 	winbox.addEventListener("click", function() { ui.doc.body.removeChild(winbox); });
 	this.doc.body.appendChild(winbox);
 	winbox.appendChild(wintext);
