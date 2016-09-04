@@ -18,9 +18,16 @@ SudokuUI.prototype.setSudoku = function(s) {
 	this.createHTML();
 	this.cellSelected = false;
 	this.selectedCell = { i : 0, j : 0 };
+
+	this.blanks = this.sudoku.m * this.sudoku.n * this.sudoku.m * this.sudoku.n;
 	for(var i = 0; i < this.sudoku.m * this.sudoku.n; ++i) {
 		for(var j = 0; j < this.sudoku.m * this.sudoku.n; ++j) {
-			this.cell(i,j).innerHTML = this.sudoku.grid[i][j] == -1 ? "&nbsp;" : this.sudoku.grid[i][j];
+			if(this.sudoku.grid[i][j] == -1) {
+				this.cell(i,j).innerHTML = "&nbsp;";
+			} else {
+				this.cell(i,j).innerHTML = this.sudoku.grid[i][j];
+				this.blanks--;
+			}
 			if(this.sudoku.given[i][j]) {
 				this.cell(i,j).dataset.given = "given";
 			}
