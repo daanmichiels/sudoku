@@ -126,5 +126,6 @@ select#level {
 button#restart {
 	position: absolute;
 	top: 12vmin;
-	right: calc(50vw - 36vmin);
+	right: calc(50vw - 36vmin + 1px);
+	width: calc(24vmin + 2px);
 }
