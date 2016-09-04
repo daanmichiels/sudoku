@@ -94,12 +94,6 @@ select, button {
 	border: 2px solid black;
 	box-sizing: border-box;
 }
-button {
-	width: 24vmin;
-}
-select {
-	width: 18vmin;
-}
 
 button:hover {
 	background-color: #ffffdd;
@@ -114,13 +108,15 @@ button#new {
 	position: absolute;
 	top: 12vmin;
 	left: calc(50vw - 36vmin);
+	width: calc(24vmin - 1px);
 }
 select#level {
 	position: absolute;
 	top: 12vmin;
-	left: calc(50vw - 12vmin);
+	left: calc(50vw - 12vmin - 1px);
 	border-left: none;
 	text-indent: 1vmin;
+	width: 20vmin;
 }
 
 button#restart {
