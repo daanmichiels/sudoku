@@ -20,6 +20,8 @@ h1 {
 	text-align: center;
 	font-size: 1.2em;
 	cursor: default;
+	font-family: 'Leckerli One', cursive;
+	color: #0000ff;
 }
 
 .sudoku td:hover {
@@ -36,6 +38,12 @@ h1 {
 
 .sudoku td[data-active="active"] {
 	background-color: #ffff99;
+}
+
+.sudoku td[data-given="given"] {
+	font-family: "Montserrat", sans-serif;
+	font-size: 120%;
+	color: #000000;
 }
 
 .sudoku td table.minis {
