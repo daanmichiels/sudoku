@@ -3,6 +3,13 @@
 Sudoku game in Javascript.
 Play at [http://www.daanmichiels.com/sudoku](http://www.daanmichiels.com/sudoku).
 
+
+## Mobile version
+
+The game is currently not usable on mobile. It requires a physical keyboard.
+This may change in the future.
+
+
 ## The docs/ folder
 
 The actual code can be found in the `docs` folder.
