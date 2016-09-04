@@ -1,7 +1,7 @@
 
 levels = ["level1", "level2", "level3", "level4", "level5"]
 
-with open("puzzles.js", "w") as f:
+with open("docs/puzzles.js", "w") as f:
 	f.write("puzzles = {")
 
 	first = True
