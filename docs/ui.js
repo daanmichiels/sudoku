@@ -160,7 +160,7 @@ SudokuUI.prototype.handleKeypress = function(evt) {
 		this.cell(i,j).innerHTML = number;
 
 		if(this.blanks == 0) {
-			if(this.sudoku.correct()) {
+			if(this.sudoku.isSolved()) {
 				this.win();
 			}
 		}

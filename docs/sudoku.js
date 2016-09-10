@@ -91,7 +91,7 @@ function createSudoku(level) {
 	return s;
 }
 
-Sudoku.prototype.correct = function() {
+Sudoku.prototype.isSolved = function() {
 	var m = this.m;
 	var n = this.n;
 
