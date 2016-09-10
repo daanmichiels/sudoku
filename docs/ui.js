@@ -194,6 +194,14 @@ SudokuUI.prototype.handleKeydown = function(evt) {
 			case 40:
 				i += 1;
 				break;
+			case 46: //delete
+			case 8:  //backspace
+				if(this.sudoku.grid[i][j] != -1) {
+					this.blanks++;
+				}
+				this.sudoku.grid[i][j] = -1;
+				this.cell(i,j).innerHTML = "&nbsp;";
+				break;
 			default:
 				break;
 		}
