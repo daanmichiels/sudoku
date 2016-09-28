@@ -16,10 +16,8 @@ var SudokuUI = function(doc) {
 
 SudokuUI.prototype.newPuzzle = function() {
 	console.log("New puzzle");
-	var s = new Sudoku(3,3);
 	var level = this.doc.getElementById("level").value;
-	level = Number(level);
-	s = createSudoku(level);
+	var s = Sudoku.create(level);
 	var winbox = this.doc.getElementById("winbox");
 	if(winbox) {
 		this.doc.body.removeChild(winbox);
@@ -27,8 +25,17 @@ SudokuUI.prototype.newPuzzle = function() {
 	this.setSudoku(s);
 }
 
+function loadTrivialPuzzle() {
+	var level = 0;
+	var s = createSudoku(level);
+	var winbox = document.getElementById("winbox");
+	if(winbox) {
+		document.body.removeChild(winbox);
+	}
+	this.setSudoku(s);
+}
+
 SudokuUI.prototype.restartPuzzle = function() {
-	console.log("Restart puzzle");
 	if(!this.sudoku) {
 		return;
 	}
@@ -36,7 +43,7 @@ SudokuUI.prototype.restartPuzzle = function() {
 	for(var i=0; i<s.m*s.n; ++i) {
 		for(var j=0; j<s.m*s.n; ++j) {
 			if(!s.given[i][j]) {
-				s.grid[i][j] = -1;
+				s.set(i,j,-1);
 				this.cell(i,j).innerHTML = "&nbsp;";
 			}
 		}
@@ -60,16 +67,14 @@ SudokuUI.prototype.setSudoku = function(s) {
 	this.cellSelected = false;
 	this.selectedCell = { i : 0, j : 0 };
 
-	this.blanks = this.sudoku.m * this.sudoku.n * this.sudoku.m * this.sudoku.n;
 	for(var i = 0; i < this.sudoku.m * this.sudoku.n; ++i) {
 		for(var j = 0; j < this.sudoku.m * this.sudoku.n; ++j) {
-			if(this.sudoku.grid[i][j] == -1) {
+			if(this.sudoku.get(i,j) == -1) {
 				this.cell(i,j).innerHTML = "&nbsp;";
 			} else {
-				this.cell(i,j).innerHTML = this.sudoku.grid[i][j];
-				this.blanks--;
+				this.cell(i,j).innerHTML = this.sudoku.get(i,j);
 			}
-			if(this.sudoku.given[i][j]) {
+			if(this.sudoku.given(i,j)) {
 				this.cell(i,j).dataset.given = "given";
 			}
 		}
@@ -152,24 +157,15 @@ SudokuUI.prototype.handleKeypress = function(evt) {
 	var key = evt.key;
 	var number = Number(key);
 	if(number && number <= this.sudoku.m * this.sudoku.n) {
-		if(this.sudoku.grid[i][j] != -1) {
-			this.blanks++;
-		}
-		this.sudoku.grid[i][j] = number;
-		this.blanks--;
+		this.sudoku.set(i,j,number);
 		this.cell(i,j).innerHTML = number;
 
-		if(this.blanks == 0) {
-			if(this.sudoku.isSolved()) {
-				this.win();
-			}
+		if(this.sudoku.isSolved()) {
+			this.win();
 		}
 
 	} else if (key == " " || key == "0") {
-		if(this.sudoku.grid[i][j] != -1) {
-			this.blanks++;
-		}
-		this.sudoku.grid[i][j] = -1;
+		this.sudoku.set(i,j,-1);
 		this.cell(i,j).innerHTML = "&nbsp;";
 	}
 };
@@ -196,10 +192,7 @@ SudokuUI.prototype.handleKeydown = function(evt) {
 				break;
 			case 46: //delete
 			case 8:  //backspace
-				if(this.sudoku.grid[i][j] != -1) {
-					this.blanks++;
-				}
-				this.sudoku.grid[i][j] = -1;
+				this.sudoku.set(i,j,-1);
 				this.cell(i,j).innerHTML = "&nbsp;";
 				break;
 			default:
