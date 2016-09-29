@@ -15,6 +15,7 @@ var Sudoku = function(m, n) {
 		this._grid.push(row_grid);
 		this._given.push(row_given);
 	}
+	this._callbacks = {};
 };
 
 Object.defineProperty(Sudoku.prototype, "m", {
@@ -26,6 +27,12 @@ Object.defineProperty(Sudoku.prototype, "m", {
 Object.defineProperty(Sudoku.prototype, "n", {
 	get : function () {
 		return this._n;
+	}
+});
+
+Object.defineProperty(Sudoku.prototype, "blanks", {
+	get : function() {
+		return this._blanks;
 	}
 });
 
@@ -41,6 +48,8 @@ Sudoku.prototype.set = function(i,j,entry) {
 	if(entry != -1) {
 		this._blanks--;
 	}
+	localStorage.setItem("sudoku", this.toString());
+	this._trigger("set", [i,j,entry]);
 };
 
 Sudoku.prototype.get = function(i,j) {
@@ -106,15 +115,53 @@ Sudoku.prototype.isSolved = function() {
 	return true;
 };
 
+Sudoku.prototype.toString = function() {
+	var str = "";
+	str += this._m.toString() + "x" + this._n.toString() + ":";
+	for(var i = 0; i<this._m*this._n; ++i) {
+		for(var j=0; j<this._m*this._n; ++j) {
+			str += (this._grid[i][j] == -1 ? "." : this._grid[i][j].toString());
+		}
+	}
+	str += ":";
+	for(var i = 0; i<this._m*this._n; ++i) {
+		for(var j=0; j<this._m*this._n; ++j) {
+			str += (this._given[i][j] ? "-" : ".");
+		}
+	}
+	return str;
+}
+
+Sudoku.prototype.registerCallback = function(event, callback) {
+	if(!this._callbacks[event]) {
+		this._callbacks[event] = [];
+	}
+	this._callbacks[event].push(callback);
+}
+
+Sudoku.prototype._trigger = function(event, args) {
+	console.log("Event triggered: " + event, args);
+	if(!this._callbacks[event]) {
+		return;
+	}
+	for(callback of this._callbacks[event]) {
+		callback.apply(undefined, args);
+	}
+}
+
 Sudoku.prototype.explain = function() {
 	prettyprint("The _sudoku_ object is of class _Sudoku_.");
 	prettyprint("The following properties are exposed:");
 	prettyprint(" - _m_: the height of a block (typically 3); readonly");
 	prettyprint(" - _n_: the width of a block (typically 3); readonly");
+	prettyprint(" - _blanks_: the number of blanks remaining; readonly");
 	prettyprint(" - _get(i,j)_: gets the entry at position (i,j); -1 represents an empty cell");
 	prettyprint(" - _set(i,j)_: sets the entry at position (i,j); -1 represents an empty cell");
 	prettyprint(" - _given(i,j)_: checks whether cell (i,j) was a given");
 	prettyprint(" - _isSolved()_: checks whether the sudoko is solved");
+	prettyprint(" - _toString()_: return a string representation of the sudoku");
+	prettyprint(" - _registerCallback()_: for registering callback that will be called when the")
+	prettyprint("                       the sudoku is changed");
 	prettyprint(" - _explain()_: give this explanation");
 	prettyprint("");
 	prettyprint("Cells are numbered by a pair _(i,j)_, where _i_ is the number of the row,");
@@ -122,6 +169,13 @@ Sudoku.prototype.explain = function() {
 	prettyprint("");
 	prettyprint("The function _set(i,j)_ will fail with a log message if cell (i,j) is a");
 	prettyprint("given.");
+	prettyprint("");
+	prettyprint("The class _Sudoku_ also has a static method _Sudoku.create(level)_, which");
+	prettyprint("creates a sudoku of the given level.");
+	prettyprint("Available levels are ");
+	for(var level of Object.keys(puzzles)) {
+		prettyprint(" - " + level);
+	}
 }
 
 Sudoku.create = function(level) {
