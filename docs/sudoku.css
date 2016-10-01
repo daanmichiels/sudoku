@@ -13,7 +13,7 @@ h1 {
 	left: calc(50vw - 36vmin);
 }
 
-.sudoku table {
+table#grid {
 	border: 2px solid black;
 	border-collapse: collapse;
 	box-sizing: border-box;
@@ -25,11 +25,11 @@ h1 {
 	top: 20vmin;
 }
 
-.sudoku tr {
+table#grid tr {
 	height: 8vmin;
 	box-sizing: border-box;
 }
-.sudoku td {
+table#grid td {
 	border: 1px solid #dddddd;
 	width: 8vmin;
 	height: 8vmin;
@@ -41,23 +41,23 @@ h1 {
 	box-sizing: border-box;
 }
 
-.sudoku td:hover {
+table#grid td:hover {
 	background-color: #ffffdd;
 }
 
-.sudoku td.thickleft {
+table#grid td.thickleft {
 	border-left: 2px solid black;
 }
 
-.sudoku td.thicktop {
+table#grid td.thicktop {
 	border-top: 2px solid black;
 }
 
-.sudoku td[data-active="active"] {
+table#grid td[data-active="active"] {
 	background-color: #ffff99;
 }
 
-.sudoku td[data-given="given"] {
+table#grid td.given {
 	font-family: "Montserrat", sans-serif;
 	color: #000000;
 }

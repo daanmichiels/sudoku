@@ -8,11 +8,3 @@ function prettyprint(msg) {
 	}
 	console.log.apply(console, args);
 }
-
-function explain() {
-	prettyprint("Hey there!");
-	prettyprint("The following Javascripts objects are exposed for your use:");
-	prettyprint(" - _sudoku_: an object representing the current sudoku");
-	prettyprint(" - _ui_: an object representing the UI");
-	prettyprint("Both of these have a _explain()_ function that explains their use.");
-}

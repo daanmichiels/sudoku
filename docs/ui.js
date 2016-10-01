@@ -1,182 +1,165 @@
 
-var SudokuUI = function(doc) {
-	this.doc = doc;
-	this.cellSelected = false;
-	this.selectedCell = { i : 0, j : 0 };
+var SudokuUI = function(element) {
+	this._root = element;
+	this._root.innerHTML = "";
 
 	var ui = this;
-	this.doc.addEventListener("keypress", function(evt) { ui.handleKeypress(evt); });
-	this.doc.addEventListener("keydown", function(evt) { ui.handleKeydown(evt); });
+	document.addEventListener("keypress", function(evt) { ui.handleKeypress(evt); });
+	document.addEventListener("keydown", function(evt) { ui.handleKeydown(evt); });
 
-	var newbutton = this.doc.getElementById("new");
-	var restartbutton = this.doc.getElementById("restart");
-	newbutton.addEventListener("click", function(evt) { ui.newPuzzle(); });
-	restartbutton.addEventListener("click", function(evt) { ui.restartPuzzle(); });
+	this._newbutton = document.createElement("button");
+	this._newbutton.innerHTML = "New";
+	this._newbutton.id = "new";
+	this._newbutton.addEventListener("click", function(evt) { ui.newPuzzle(); });
+
+	this._restartbutton = document.createElement("button");
+	this._restartbutton.innerHTML = "Restart";
+	this._restartbutton.id = "restart";
+	this._restartbutton.addEventListener("click", function(evt) { ui.restartPuzzle(); });
+
+	this._restorebutton = document.createElement("button");
+	this._restorebutton.innerHTML = "Restore";
+	this._restorebutton.id = "restore";
+	this._restorebutton.addEventListener("click", function(evt) { ui.restorePuzzle(); });
+	this._restorebutton.style.visibility = "hidden";
+
+	this._levelselect = document.createElement("select");
+	this._levelselect.id = "level";
+	var levelnames = ["trivial", "level1", "level2", "level3", "level4", "level5"];
+	var leveldescriptions = ["Trivial", "Easy", "Normal", "Hard", "Very hard", "Insane"];
+	for(var i=0; i<levelnames.length; ++i) {
+		var option = document.createElement("option");
+		option.value = levelnames[i];
+		option.innerHTML = leveldescriptions[i];
+		this._levelselect.appendChild(option);
+	}
+
+	this._root.appendChild(this._newbutton);
+	this._root.appendChild(this._restartbutton);
+	this._root.appendChild(this._restorebutton);
+	this._root.appendChild(this._levelselect);
+
+	this.newPuzzle();
 };
+
+SudokuUI.prototype.handleSet = function(i,j,value) {
+	this._cells[i][j].innerHTML = (value == -1 ? "&nbsp;" : value);
+}
+
+SudokuUI.prototype.handleClear = function() {
+	for(var i=0; i<this._sudoku.m*this._sudoku.n; ++i) {
+		for(var j=0; j<this._sudoku.m*this._sudoku.n; ++j) {
+			this.handleSet(i,j,this._sudoku.get(i,j));
+		}
+	}
+}
+
+SudokuUI.prototype.handleRestore = function() {
+	for(var i=0; i<this._sudoku.m*this._sudoku.n; ++i) {
+		for(var j=0; j<this._sudoku.m*this._sudoku.n; ++j) {
+			this.handleSet(i,j,this._sudoku.get(i,j));
+		}
+	}
+}
 
 SudokuUI.prototype.newPuzzle = function() {
-	console.log("New puzzle");
-	var level = this.doc.getElementById("level").value;
-	var s = Sudoku.create(level);
-	var winbox = this.doc.getElementById("winbox");
-	if(winbox) {
-		this.doc.body.removeChild(winbox);
-	}
-	this.setSudoku(s);
-}
-
-function loadTrivialPuzzle() {
-	var level = 0;
-	var s = createSudoku(level);
-	var winbox = document.getElementById("winbox");
-	if(winbox) {
-		document.body.removeChild(winbox);
-	}
-	this.setSudoku(s);
-}
-
-SudokuUI.prototype.restartPuzzle = function() {
-	if(!this.sudoku) {
-		return;
-	}
-	var s = this.sudoku;
-	for(var i=0; i<s.m*s.n; ++i) {
-		for(var j=0; j<s.m*s.n; ++j) {
-			if(!s.given[i][j]) {
-				s.set(i,j,-1);
-				this.cell(i,j).innerHTML = "&nbsp;";
-			}
-		}
-	}
-	this.cell(this.selectedCell.i, this.selectedCell.j).dataset.active = "";
-	this.cellSelected = false;
-	this.selectedCell = { i : 0, j : 0 };
-	var winbox = this.doc.getElementById("winbox");
-	if(winbox) {
-		this.doc.body.removeChild(winbox);
-	}
-}
-
-SudokuUI.prototype.cell = function(i, j) {
-	return this.doc.getElementById(i + ";" + j);
-};
-
-SudokuUI.prototype.setSudoku = function(s) {
-	this.sudoku = s;
-	this.createHTML();
-	this.cellSelected = false;
-	this.selectedCell = { i : 0, j : 0 };
-
-	for(var i = 0; i < this.sudoku.m * this.sudoku.n; ++i) {
-		for(var j = 0; j < this.sudoku.m * this.sudoku.n; ++j) {
-			if(this.sudoku.get(i,j) == -1) {
-				this.cell(i,j).innerHTML = "&nbsp;";
-			} else {
-				this.cell(i,j).innerHTML = this.sudoku.get(i,j);
-			}
-			if(this.sudoku.given(i,j)) {
-				this.cell(i,j).dataset.given = "given";
-			}
-		}
-	}
-};
-
-SudokuUI.prototype.handleClick = function(i, j) {
-	if(this.cellSelected) {
-		this.cell(this.selectedCell.i, this.selectedCell.j).dataset.active = "";
-	}
-	this.cellSelected = true;
-	this.selectedCell.i = i;
-	this.selectedCell.j = j;
-	this.cell(this.selectedCell.i, this.selectedCell.j).dataset.active = "active";
-};
-
-SudokuUI.prototype.createHTML = function() {
-	if(!this.sudoku) {
-		throw "Cannot createHTML when no sudoku is set.";
-	}
-
-	var m = this.sudoku.m;
-	var n = this.sudoku.n;
-
+	var level = this._levelselect.value;
+	this._sudoku = Sudoku.create(level);
 	var ui = this;
-	var table = this.doc.createElement("table");
-	// note the use of 'let' instead of 'var'
-	// to get a separate copy of the variable
-	// for each of the closure we create below
-	// (for the events)
-	for(let i = 0; i < m*n; ++i) {
-		var row = this.doc.createElement("tr");
-		for(let j = 0; j < m*n; ++j) {
-			var cell = this.doc.createElement("td");
-			if(i % m == 0) {
+	this._sudoku.registerCallback("set", function(i,j,value) { ui.handleSet(i,j,value); });
+	this._sudoku.registerCallback("clear", function(i,j,value) { ui.handleClear(); });
+	this._sudoku.registerCallback("restore", function(i,j,value) { ui.handleRestore(); });
+
+	this._cellSelected = false;
+	this._selectedCell = { i : 0, j : 0 };
+
+	// remove old grid
+	if(this._table) {
+		this._root.removeChild(this._table);
+	}
+
+	// create new grid
+	var ui = this;
+	var m = this._sudoku.m;
+	var n = this._sudoku.n;
+	this._cells = [];
+	this._table = document.createElement("table");
+	this._table.id = "grid";
+	for(let i=0; i<m*n; ++i) {
+		this._cells.push([]);
+		var row = document.createElement("tr");
+		this._table.appendChild(row);
+		for(let j=0; j<m*n; ++j) {
+			var cell = document.createElement("td");
+			this._cells[i].push(cell);
+			row.appendChild(cell);
+
+			cell.addEventListener("click", function(evt) { ui.handleCellClick(i,j); });
+			if(i%m == 0) {
 				cell.classList.add("thicktop");
 			}
-			if(j % n == 0) {
+			if(j%n == 0) {
 				cell.classList.add("thickleft");
 			}
-			cell.id = i + ";" + j;
-			cell.addEventListener("click", function() { ui.handleClick(i,j); });
-			row.appendChild(cell);
+
+			if(this._sudoku.given(i,j)) {
+				cell.classList.add("given");
+			}
 		}
-		table.appendChild(row);
 	}
-	var div = this.doc.getElementById("sudoku");
-	while (div.firstChild) {
-		div.removeChild(div.firstChild);
+	this._root.appendChild(this._table);
+
+	for(var i=0; i<this._sudoku.m*this._sudoku.n; ++i) {
+		for(var j=0; j<this._sudoku.m*this._sudoku.n; ++j) {
+			this.handleSet(i,j,this._sudoku.get(i,j));
+		}
 	}
-	div.appendChild(table);
 };
 
-SudokuUI.prototype.win = function() {
-	if(this.cellSelected) {
-		this.cell(this.selectedCell.i, this.selectedCell.j).dataset.active = "";
-		this.cellSelected = false;
+SudokuUI.prototype.restartPuzzle = function() {
+	this._sudoku.clear();
+};
+
+SudokuUI.prototype.restorePuzzle = function() {
+	this._sudoku.restore();
+};
+
+SudokuUI.prototype.handleCellClick = function(i, j) {
+	if(this._cellSelected) {
+		this._cells[this._selectedCell.i][this._selectedCell.j].dataset.active = "";
 	}
-	var winbox = this.doc.createElement("div");
-	var wintext = this.doc.createElement("span");
-	winbox.classList.add("winbox");
-	wintext.classList.add("wintext");
-	wintext.innerHTML = "Solved!";
-	var ui = this;
-	winbox.id = "winbox";
-	winbox.addEventListener("click", function() { ui.doc.body.removeChild(winbox); });
-	this.doc.body.appendChild(winbox);
-	winbox.appendChild(wintext);
-}
+	this._cellSelected = true;
+	this._selectedCell.i = i;
+	this._selectedCell.j = j;
+	this._cells[this._selectedCell.i][this._selectedCell.j].dataset.active = "active";
+};
 
 SudokuUI.prototype.handleKeypress = function(evt) {
-	if(!this.cellSelected) {
+	if(!this._cellSelected) {
 		return;
 	}
-	var i = this.selectedCell.i;
-	var j = this.selectedCell.j;
-	if(this.cell(i,j).dataset.given == "given") {
+	var i = this._selectedCell.i;
+	var j = this._selectedCell.j;
+	if(this._sudoku.given(i,j)) {
 		return;
 	}
 	var key = evt.key;
 	var number = Number(key);
-	if(number && number <= this.sudoku.m * this.sudoku.n) {
-		this.sudoku.set(i,j,number);
-		this.cell(i,j).innerHTML = number;
-
-		if(this.sudoku.isSolved()) {
-			this.win();
-		}
-
+	if(number && number <= this._sudoku.m * this._sudoku.n) {
+		this._sudoku.set(i,j,number);
 	} else if (key == " " || key == "0") {
-		this.sudoku.set(i,j,-1);
-		this.cell(i,j).innerHTML = "&nbsp;";
+		this._sudoku.set(i,j,-1);
 	}
 };
 
 SudokuUI.prototype.handleKeydown = function(evt) {
-	if(this.cellSelected) {
-		var i = this.selectedCell.i;
-		var j = this.selectedCell.j;
-		this.cell(i,j).dataset.active = "";
-		var m = this.sudoku.m;
-		var n = this.sudoku.n;
+	console.log("keydown");
+	if(this._cellSelected) {
+		var i = this._selectedCell.i;
+		var j = this._selectedCell.j;
+		this._cells[i][j].dataset.active = "";
+		var m = this._sudoku.m;
+		var n = this._sudoku.n;
 		switch(evt.keyCode) {
 			case 37:
 				j -= 1;
@@ -192,8 +175,7 @@ SudokuUI.prototype.handleKeydown = function(evt) {
 				break;
 			case 46: //delete
 			case 8:  //backspace
-				this.sudoku.set(i,j,-1);
-				this.cell(i,j).innerHTML = "&nbsp;";
+				this._sudoku.set(i,j,-1);
 				break;
 			default:
 				break;
@@ -202,9 +184,9 @@ SudokuUI.prototype.handleKeydown = function(evt) {
 		if(i >= m*n) i = m*n-1;
 		if(j < 0) j=0;
 		if(j >= m*n) j = m*n-1;
-		this.selectedCell.i = i;
-		this.selectedCell.j = j;
-		this.cell(i,j).dataset.active = "active";
+		this._selectedCell.i = i;
+		this._selectedCell.j = j;
+		this._cells[i][j].dataset.active = "active";
 	}
 };
 
