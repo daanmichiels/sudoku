@@ -33,14 +33,24 @@ var SudokuUI = function(element) {
 		option.innerHTML = leveldescriptions[i];
 		this._levelselect.appendChild(option);
 	}
+	this._levelselect.addEventListener("click", function(evt) {evt.stopPropagation(); });
 
 	this._root.appendChild(this._newbutton);
 	this._root.appendChild(this._restartbutton);
 	this._root.appendChild(this._restorebutton);
 	this._root.appendChild(this._levelselect);
 
+	document.addEventListener("click", function(evt) { ui.handleClick(evt); });
+
 	this.newPuzzle();
 };
+
+SudokuUI.prototype.handleClick = function(i,j,value) {
+	if(this._cellSelected) {
+		this._cells[this._selectedCell.i][this._selectedCell.j].dataset.active = "";
+	}
+	this._cellSelected = false;
+}
 
 SudokuUI.prototype.handleSet = function(i,j,value) {
 	this._cells[i][j].innerHTML = (value == -1 ? "&nbsp;" : value);
@@ -94,7 +104,7 @@ SudokuUI.prototype.newPuzzle = function() {
 			this._cells[i].push(cell);
 			row.appendChild(cell);
 
-			cell.addEventListener("click", function(evt) { ui.handleCellClick(i,j); });
+			cell.addEventListener("click", function(evt) { ui.handleCellClick(evt, i,j); });
 			if(i%m == 0) {
 				cell.classList.add("thicktop");
 			}
@@ -124,7 +134,7 @@ SudokuUI.prototype.restorePuzzle = function() {
 	this._sudoku.restore();
 };
 
-SudokuUI.prototype.handleCellClick = function(i, j) {
+SudokuUI.prototype.handleCellClick = function(evt, i, j) {
 	if(this._cellSelected) {
 		this._cells[this._selectedCell.i][this._selectedCell.j].dataset.active = "";
 	}
@@ -132,6 +142,8 @@ SudokuUI.prototype.handleCellClick = function(i, j) {
 	this._selectedCell.i = i;
 	this._selectedCell.j = j;
 	this._cells[this._selectedCell.i][this._selectedCell.j].dataset.active = "active";
+	evt.stopPropagation(); // don't propagate to a click on the document
+
 };
 
 SudokuUI.prototype.handleKeypress = function(evt) {
@@ -153,7 +165,6 @@ SudokuUI.prototype.handleKeypress = function(evt) {
 };
 
 SudokuUI.prototype.handleKeydown = function(evt) {
-	console.log("keydown");
 	if(this._cellSelected) {
 		var i = this._selectedCell.i;
 		var j = this._selectedCell.j;
