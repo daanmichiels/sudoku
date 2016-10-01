@@ -89,6 +89,9 @@ Sudoku.prototype.set = function(i,j,entry) {
 	}
 	this._save();
 	this._trigger("set", [i,j,entry]);
+	if(this.isSolved) {
+		this._trigger("win");
+	}
 };
 
 Sudoku.prototype.clear = function() {

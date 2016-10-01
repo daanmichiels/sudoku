@@ -25,8 +25,8 @@ var SudokuUI = function(element) {
 
 	this._levelselect = document.createElement("select");
 	this._levelselect.id = "level";
-	var levelnames = ["trivial", "level1", "level2", "level3", "level4", "level5"];
-	var leveldescriptions = ["Trivial", "Easy", "Normal", "Hard", "Very hard", "Insane"];
+	var levelnames = ["level1", "level2", "level3", "level4", "level5"];
+	var leveldescriptions = ["Easy", "Normal", "Hard", "Very hard", "Insane"];
 	for(var i=0; i<levelnames.length; ++i) {
 		var option = document.createElement("option");
 		option.value = levelnames[i];
@@ -35,15 +35,30 @@ var SudokuUI = function(element) {
 	}
 	this._levelselect.addEventListener("click", function(evt) {evt.stopPropagation(); });
 
+	this._winbox = document.createElement("div");
+	this._winbox.classList.add("winbox");
+	this._winbox.id = "winbox";
+	this._root.appendChild(this._winbox);
+	var wintext = document.createElement("span");
+	wintext.classList.add("wintext");
+	wintext.innerHTML = "Solved!";
+	this._winbox.appendChild(wintext);
+	this._winbox.style.visibility = "hidden";
+
 	this._root.appendChild(this._newbutton);
 	this._root.appendChild(this._restartbutton);
 	this._root.appendChild(this._restorebutton);
 	this._root.appendChild(this._levelselect);
 
-	document.addEventListener("click", function(evt) { ui.deselectCell(); });
+	document.addEventListener("click", function(evt) { ui.handleClick(); });
 
 	this.loadPuzzle();
 };
+
+SudokuUI.prototype.handleClick = function() {
+	this.deselectCell();
+	this._winbox.style.visibility = "hidden";
+}
 
 SudokuUI.prototype.deselectCell = function() {
 	if(!this._cellSelected) {
@@ -91,10 +106,16 @@ SudokuUI.prototype.loadPuzzle = function() {
 	}
 }
 
-SudokuUI.prototype.newPuzzle = function() {
-	var level = this._levelselect.value;
+SudokuUI.prototype.newPuzzle = function(level=null) {
+	if(!level) {
+		var level = this._levelselect.value;
+	}
 	this._sudoku = Sudoku.create(level);
 	this.initPuzzle();
+}
+
+SudokuUI.prototype.handleWin = function() {
+	this._winbox.style.visibility = "visible";
 }
 
 SudokuUI.prototype.initPuzzle = function() {
@@ -102,6 +123,7 @@ SudokuUI.prototype.initPuzzle = function() {
 	this._sudoku.registerCallback("set", function(i,j,value) { ui.handleSet(i,j,value); });
 	this._sudoku.registerCallback("clear", function(i,j,value) { ui.handleClear(); });
 	this._sudoku.registerCallback("restore", function(i,j,value) { ui.handleRestore(); });
+	this._sudoku.registerCallback("win", function() { ui.handleWin(); });
 
 	this._cellSelected = false;
 	this._selectedCell = { i : 0, j : 0 };
@@ -169,7 +191,6 @@ SudokuUI.prototype.handleCellClick = function(evt, i, j) {
 	this._selectedCell.j = j;
 	this._cells[this._selectedCell.i][this._selectedCell.j].dataset.active = "active";
 	evt.stopPropagation(); // don't propagate to a click on the document
-
 };
 
 SudokuUI.prototype.handleKeypress = function(evt) {
