@@ -40,15 +40,16 @@ var SudokuUI = function(element) {
 	this._root.appendChild(this._restorebutton);
 	this._root.appendChild(this._levelselect);
 
-	document.addEventListener("click", function(evt) { ui.handleClick(evt); });
+	document.addEventListener("click", function(evt) { ui.deselectCell(); });
 
 	this.loadPuzzle();
 };
 
-SudokuUI.prototype.handleClick = function(i,j,value) {
-	if(this._cellSelected) {
-		this._cells[this._selectedCell.i][this._selectedCell.j].dataset.active = "";
+SudokuUI.prototype.deselectCell = function() {
+	if(!this._cellSelected) {
+		return;
 	}
+	this._cells[this._selectedCell.i][this._selectedCell.j].dataset.active = "";
 	this._cellSelected = false;
 }
 
@@ -197,22 +198,25 @@ SudokuUI.prototype.handleKeydown = function(evt) {
 		var m = this._sudoku.m;
 		var n = this._sudoku.n;
 		switch(evt.keyCode) {
-			case 37:
+			case 37: //left
 				j -= 1;
 				break;
-			case 38:
+			case 38: //up
 				i -= 1;
 				break;
-			case 39:
+			case 39: //right
 				j += 1;
 				break;
-			case 40:
+			case 40: //down
 				i += 1;
 				break;
 			case 46: //delete
 			case 8:  //backspace
 				this._sudoku.set(i,j,-1);
 				break;
+			case 27: //escape
+				this.deselectCell();
+				return;
 			default:
 				break;
 		}
