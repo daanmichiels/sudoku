@@ -26,6 +26,12 @@ Object.defineProperty(Sudoku.prototype, "m", {
 	}
 });
 
+Object.defineProperty(Sudoku.prototype, "restoreable", {
+	get: function() {
+		return this._cleared;
+	}
+});
+
 Object.defineProperty(Sudoku.prototype, "n", {
 	get : function () {
 		return this._n;
@@ -211,8 +217,9 @@ Sudoku.prototype.explain = function() {
 	prettyprint(" - _get(i,j)_: gets the entry at position (i,j); -1 represents an empty cell");
 	prettyprint(" - _set(i,j,value)_: sets the entry at position (i,j); -1 represents an empty cell");
 	prettyprint(" - _clear()_: clears the sudoku, so that only the givens are set");
-	prettyprint(" - _restore()_: restores a previously cleared sudoku; this only if no _set_ or");
+	prettyprint(" - _restore()_: restores a previously cleared sudoku; this only works if no _set_ or");
 	prettyprint("              _restore_ calls have been made since the last clear_");
+	prettyprint(" - _restoreable: whether the puzzle can be restored");
 	prettyprint(" - _given(i,j)_: checks whether cell (i,j) was a given");
 	prettyprint(" - _isSolved()_: checks whether the sudoko is solved");
 	prettyprint(" - _toString()_: return a string representation of the sudoku");
@@ -229,6 +236,48 @@ Sudoku.prototype.explain = function() {
 	for(var level of Object.keys(puzzles)) {
 		prettyprint(" - " + level);
 	}
+}
+
+Sudoku.load = function() {
+	var s = localStorage.getItem("sudoku");
+	console.log(s);
+	var pattern = /(2|3)x(2|3):((?:cleared)?):([\.123456789]{81}):([-\.]{81})/;
+	var match = pattern.exec(s);
+	if(!match) {
+		return null;
+	}
+	var m = Number(match[1]);
+	var n = Number(match[2]);
+	var s = new Sudoku(m,n);
+	s._cleared = (match[3] == "cleared" ? true : false);
+	var blanks = 0;
+	for(var i=0; i<m*n; ++i) {
+		for(var j=0; j<m*n; ++j) {
+			var c = match[4].charAt(m*n*i + j);
+			if(c == ".") {
+				blanks++;
+				s._grid[i][j] = -1;
+			}
+			else {
+				s._grid[i][j] = Number(c);
+			}
+		}
+	}
+	s._blanks = blanks;
+	var givens = 0;
+	for(var i=0; i<m*n; ++i) {
+		for(var j=0; j<m*n; ++j) {
+			var c = match[5].charAt(m*n*i + j);
+			if(c == "-") {
+				givens++;
+				s._given[i][j] = true;
+			}
+			else {
+				s._given[i][j] = false;
+			}
+		}
+	}
+	return s;
 }
 
 Sudoku.create = function(level) {
