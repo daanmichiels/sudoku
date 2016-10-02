@@ -119,7 +119,7 @@ select#level {
 	width: 20vmin;
 }
 
-button#restart {
+button#restart, button#restore {
 	position: absolute;
 	top: 12vmin;
 	right: calc(50vw - 36vmin + 1px);
